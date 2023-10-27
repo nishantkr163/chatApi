@@ -33,6 +33,15 @@ userRouter.post("/register", (req, res) => {
     }
 })
 
+userRouter.get("/", async (req, res) => {
+  try {
+    const users = await UserModel.find();
+    res.status(200).send(users)
+  } catch (error) {
+    res.status(400).send({ "error" : error })
+  }
+})
+
 userRouter.post("/login", async (req, res) => {
     const { email, pass } = req.body;
     try {
