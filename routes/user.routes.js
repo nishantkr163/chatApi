@@ -42,11 +42,21 @@ userRouter.get("/", async (req, res) => {
   }
 })
 
+userRouter.get("/:userId", async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const users = await UserModel.findOne({ _id : userId });
+    res.status(200).send(users)
+  } catch (error) {
+    res.status(400).send({ "error" : error })
+  }
+})
+
+
 userRouter.post("/login", async (req, res) => {
     const { email, pass } = req.body;
     try {
       const user = await UserModel.findOne({ email });
-      console.log(user);
       if (user) {
         const token = jwt.sign(
           {
@@ -58,7 +68,7 @@ userRouter.post("/login", async (req, res) => {
         bcrypt.compare(pass, user.pass, function (err, result) {
           // result == true
           if (result) {
-            res.status(200).send({ message: "Login Successful", token });
+            res.status(200).send({ message: "Login Successful", token, user });
           } else {
             res.status(200).send({ message: "Login Unsuccessful, wrong credentials" });
           }
